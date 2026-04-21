@@ -3,33 +3,33 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 
-public class BinaryTree implements Collection<Integer> {
+public class BinaryTree<T extends Comparable<T>> implements Collection<T> {
 
-    private Node root;
+    private Node<T> root;
     private int size = 0;
 
     @Override
-    public boolean add(Integer value) {
+    public boolean add(T value) {
         if (root == null) {
-            root = new Node(value);
+            root = new Node<>(value);
             size++;
             return true;
         }
         return addRec(root, value);
     }
 
-    private boolean addRec(Node node, int value) {
-        if (value < node.getValue()) {
+    private boolean addRec(Node<T> node, T value) {
+        if (value.compareTo(node.getValue()) < 0) {
             if (node.getLeft() == null) {
-                node.setLeft(new Node(value));
+                node.setLeft(new Node<>(value));
                 size++;
                 return true;
             } else {
                 return addRec(node.getLeft(), value);
             }
-        } else if (value > node.getValue()) {
+        } else if (value.compareTo(node.getValue()) > 0) {
             if (node.getRight() == null) {
-                node.setRight(new Node(value));
+                node.setRight(new Node<>(value));
                 size++;
                 return true;
             } else {
@@ -42,32 +42,32 @@ public class BinaryTree implements Collection<Integer> {
 
     @Override
     public boolean remove(Object o) {
-        Integer value = (Integer) o;
+        T value = (T) o;
         if (!contains(value)) return false;
         root = removeRec(root, value);
         size--;
         return true;
     }
 
-    private Node removeRec(Node node, int value) {
+    private Node<T> removeRec(Node<T> node, T value) {
         if (node == null) return null;
 
-        if (value < node.getValue()) {
+        if (value.compareTo(node.getValue()) < 0) {
             node.setLeft(removeRec(node.getLeft(), value));
-        } else if (value > node.getValue()) {
+        } else if (value.compareTo(node.getValue()) > 0) {
             node.setRight(removeRec(node.getRight(), value));
         } else {
             if (node.getLeft() == null) return node.getRight();
             if (node.getRight() == null) return node.getLeft();
 
-            Node min = findMin(node.getRight());
+            Node<T> min = findMin(node.getRight());
             node.setValue(min.getValue());
             node.setRight(removeRec(node.getRight(), min.getValue()));
         }
         return node;
     }
 
-    private Node findMin(Node node) {
+    private Node<T> findMin(Node<T> node) {
         while (node.getLeft() != null) {
             node = node.getLeft();
         }
@@ -76,14 +76,14 @@ public class BinaryTree implements Collection<Integer> {
 
     @Override
     public boolean contains(Object o) {
-        Integer value = (Integer) o;
+        T value = (T) o;
         return containsRec(root, value);
     }
 
-    private boolean containsRec(Node node, int value) {
+    private boolean containsRec(Node<T> node, T value) {
         if (node == null) return false;
-        if (value == node.getValue()) return true;
-        if (value < node.getValue()) {
+        if (value.compareTo(node.getValue()) == 0) return true;
+        if (value.compareTo(node.getValue()) < 0) {
             return containsRec(node.getLeft(), value);
         } else {
             return containsRec(node.getRight(), value);
@@ -91,18 +91,18 @@ public class BinaryTree implements Collection<Integer> {
     }
 
     @Override
-    public Iterator<Integer> iterator() {
+    public Iterator<T> iterator() {
         return new BinaryTreeIterator();
     }
 
-    private class BinaryTreeIterator implements Iterator<Integer> {
-        private Stack<Node> stack = new Stack<>();
+    private class BinaryTreeIterator implements Iterator<T> {
+        private Stack<Node<T>> stack = new Stack<>();
 
         public BinaryTreeIterator() {
             pushLeft(root);
         }
 
-        private void pushLeft(Node node) {
+        private void pushLeft(Node<T> node) {
             while (node != null) {
                 stack.push(node);
                 node = node.getLeft();
@@ -115,9 +115,9 @@ public class BinaryTree implements Collection<Integer> {
         }
 
         @Override
-        public Integer next() {
+        public T next() {
             if (!hasNext()) throw new NoSuchElementException();
-            Node node = stack.pop();
+            Node<T> node = stack.pop();
             if (node.getRight() != null) {
                 pushLeft(node.getRight());
             }
@@ -136,9 +136,9 @@ public class BinaryTree implements Collection<Integer> {
     }
 
     @Override
-    public boolean addAll(Collection<? extends Integer> c) {
+    public boolean addAll(Collection<? extends T> c) {
         boolean changed = false;
-        for (Integer val : c) {
+        for (T val : c) {
             if (add(val)) changed = true;
         }
         return changed;
@@ -170,14 +170,14 @@ public class BinaryTree implements Collection<Integer> {
     public Object[] toArray() {
         Object[] arr = new Object[size];
         int i = 0;
-        for (Integer val : this) {
+        for (T val : this) {
             arr[i++] = val;
         }
         return arr;
     }
 
     @Override
-    public <T> T[] toArray(T[] a) {
+    public <U> U[] toArray(U[] a) {
         throw new UnsupportedOperationException("toArray with array not implemented");
     }
 
