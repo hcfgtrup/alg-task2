@@ -1,21 +1,22 @@
 package model;
 
+import annotations.NotNull;
 import annotations.OrderType;
 import annotations.Validate;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Order {
-    @Validate(required = true)
-    private final String id;
+    @NotNull
+    private String id;
 
     @Validate(required = true)
-    private final String description;
+    private String description;
 
     @OrderType("ORDINARY")
-    private final String type;
+    private String type;
 
-    private final long createdAt;
+    private long createdAt;
 
     public Order(String description, boolean isUrgent) {
         this.id = UUID.randomUUID().toString();

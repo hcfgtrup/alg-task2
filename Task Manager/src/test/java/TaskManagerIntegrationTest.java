@@ -1,5 +1,3 @@
-package test;
-
 import manager.TaskManager;
 import model.Order;
 import org.junit.jupiter.api.Test;
@@ -47,5 +45,17 @@ class TaskManagerIntegrationTest {
         int total = manager.getTotalProcessed();
         int urgent = manager.getUrgentCount();
         assertTrue(urgent >= 0 && urgent <= total);
+    }
+
+    @Test
+    void multipleProducersAndConsumersWorkWithoutErrors() throws InterruptedException {
+        TaskManager manager = new TaskManager(20, 3, 5, 25);
+        manager.start();
+
+        Thread.sleep(5000);
+        manager.shutdown();
+
+        assertTrue(manager.getTotalProcessed() > 0);
+        assertEquals(manager.getUrgentCount() + manager.getOrdinaryCount(), manager.getTotalProcessed());
     }
 }

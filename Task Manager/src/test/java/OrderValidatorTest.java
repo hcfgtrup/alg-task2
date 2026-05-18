@@ -1,5 +1,3 @@
-package test;
-
 import model.Order;
 import org.junit.jupiter.api.Test;
 import validator.OrderValidator;
@@ -8,8 +6,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class OrderValidatorTest {
 
     @Test
-    void validOrderShouldPass() {
+    void validOrdinaryOrderShouldPass() {
         Order order = new Order("Test order", false);
+        assertTrue(OrderValidator.validate(order));
+    }
+
+    @Test
+    void validUrgentOrderShouldPass() {
+        Order order = new Order("Urgent task", true);
         assertTrue(OrderValidator.validate(order));
     }
 
@@ -20,7 +24,7 @@ class OrderValidatorTest {
 
     @Test
     void orderWithNullIdShouldFail() throws Exception {
-        Order order = new Order("test", false);
+        Order order = new Order("Test", false);
         java.lang.reflect.Field idField = Order.class.getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(order, null);
@@ -33,6 +37,15 @@ class OrderValidatorTest {
         java.lang.reflect.Field descField = Order.class.getDeclaredField("description");
         descField.setAccessible(true);
         descField.set(order, "");
+        assertFalse(OrderValidator.validate(order));
+    }
+
+    @Test
+    void orderWithInvalidTypeShouldFail() throws Exception {
+        Order order = new Order("Test", false);
+        java.lang.reflect.Field typeField = Order.class.getDeclaredField("type");
+        typeField.setAccessible(true);
+        typeField.set(order, "INVALID");
         assertFalse(OrderValidator.validate(order));
     }
 }

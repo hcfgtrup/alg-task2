@@ -27,3 +27,20 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+# Maven
+target/
+pom.xml.tag
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.settings/
+
+# OS
+Thumbs.db
+
+# Old
+lib/
